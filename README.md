@@ -1,0 +1,1 @@
+This is a OpenGL project setup using GLFW, glad and including the glm headers.
