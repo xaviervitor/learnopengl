@@ -14,13 +14,13 @@ main:
 	@echo $(build) "build"
 	
 	g++ src/*.cpp include/glad/glad.c \
-	-o build/project.exe -std=c++17 \
+	-o build/learnopengl.exe -std=c++17 \
 	$(additional_flags) \
 	-I include/ \
 	-L lib/ \
 	-lglfw3 -lopengl32 -lgdi32 -lwinmm
 
 run: main
-	./build/project.exe
+	./build/learnopengl.exe
 
 .PHONY: all run
