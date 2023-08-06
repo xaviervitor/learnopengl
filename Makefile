@@ -1,26 +1,24 @@
 all: main
 
-# debug = defined
+build = release # fast | release | debug
+
+ifeq ($(build), fast)
+	additional_flags = 
+else ifeq ($(build), release)
+	additional_flags = -Wall -Wextra -O2 -mwindows
+else ifeq ($(build), debug)
+	additional_flags = -Wall -Wextra -g -Og
+endif
 
 main:
-ifndef debug
-	@echo "release"
+	@echo $(build) "build"
+	
 	g++ src/*.cpp include/glad/glad.c \
-	-o build/project.exe \
-	-Wall -Wextra -O2 -std=c++17 -mwindows \
+	-o build/project.exe -std=c++17 \
+	$(additional_flags) \
 	-I include/ \
 	-L lib/ \
 	-lglfw3 -lopengl32 -lgdi32 -lwinmm
-else
-	@echo "debug"
-	g++ src/*.cpp include/glad/glad.c \
-	-o build/project.exe \
-	-g -Og -Wall -Wextra -O2 -std=c++17 \
-	-I include/ \
-	-L lib/ \
-	-lglfw3 -lopengl32 -lgdi32 -lwinmm
-
-endif
 
 run: main
 	./build/project.exe
