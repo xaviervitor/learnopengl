@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "w64devkit",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:/Users/vitor/w64devkit/bin/g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64",
+            "compilerArgs": [
+                "-lglfw3",
+                "-lopengl32",
+                "-lgdi32",
+                "-lwinmm"
+            ]
+        }
+    ],
+    "version": 4
+}
