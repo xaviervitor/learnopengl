@@ -6,6 +6,10 @@
 #include <iostream>
 
 Shader::Shader(const char *vertexPath, const char *fragmentPath) {
+    // store paths for debugging
+    this->vertexSourcePath = vertexPath;
+    this->fragmentSourcePath = fragmentPath;
+    
     std::string vertexCode;
     std::string fragmentCode;
     std::ifstream vertexShaderFile;
@@ -34,7 +38,9 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) {
         fragmentCode = fragmentShaderStream.str();
 
     } catch(std::ifstream::failure& e) {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+        std::cout << "SHADER SOURCE FILE(S) COULD NOT BE READ" << std::endl << \
+        "vertex: " << vertexPath << std::endl << \
+        "fragment: " << fragmentPath << std::endl;
     }
 
     // copy c++ strings to c strings 
@@ -42,39 +48,25 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) {
     const char* fragmentShaderSource = fragmentCode.c_str();
 
     unsigned int vertexShader, fragmentShader;
-    int success;
-    char infoLog[512];
 
     // vertex shader compilation and error checking
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
+    checkVertexShaderCompileErrors(vertexShader);
 
     // fragment shader compilation and error checking
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
+    checkFragmentShaderCompileErrors(fragmentShader);
 
     // shader program linking and error checking
     ID = glCreateProgram();
     glAttachShader(ID, vertexShader);
     glAttachShader(ID, fragmentShader);
     glLinkProgram(ID);
-    glGetProgramiv(ID, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(ID, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-    }
+    checkProgramLinkErrors(ID);
 
     // the already compiled and linked shaders can be deleted
     glDeleteShader(vertexShader);
@@ -99,4 +91,39 @@ void Shader::setFloat(const std::string &name, float value) const {
 
 void Shader::setFloat4(const std::string &name, float value1, float value2, float value3, float value4) const {
     glUniform4f(glGetUniformLocation(ID, name.c_str()), value1, value2, value3, value4);
+}
+
+void Shader::checkVertexShaderCompileErrors(unsigned int shader) {
+    int success;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        char infoLog[1024];
+        glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+        std::cout << "VERTEX SHADER COMPILATION ERROR" << std::endl;
+        std::cout << "path: " << this->vertexSourcePath << std::endl;
+        std::cout << infoLog;
+    }
+}
+
+void Shader::checkFragmentShaderCompileErrors(unsigned int shader) {
+    int success;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        char infoLog[1024];
+        glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+        std::cout << "FRAGMENT SHADER COMPILATION ERROR" << std::endl;
+        std::cout << "path: " << this->fragmentSourcePath << std::endl;
+        std::cout << infoLog;
+    }
+}
+
+void Shader::checkProgramLinkErrors(unsigned int program) {
+    int success;
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if (!success) {
+        char infoLog[1024];
+        glGetProgramInfoLog(ID, 1024, NULL, infoLog);
+        std::cout << "SHADER PROGRAM LINKING ERROR" << std::endl;
+        std::cout << infoLog << std::endl;
+    }
 }

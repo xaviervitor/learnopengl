@@ -1,4 +1,5 @@
-.vscode/
-
+# push the build folder, but not the compiled exe
 build/*
 !build/README.md
+
+.vscode/settings.json
