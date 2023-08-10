@@ -3,14 +3,14 @@
         {
             "name": "w64devkit",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/include/"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:/Users/vitor/w64devkit/bin/g++.exe",
+            "compilerPath": "C:/w64devkit/bin/g++.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x64",
