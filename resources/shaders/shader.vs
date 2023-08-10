@@ -6,6 +6,10 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
 layout (location = 2) in vec2 aTexCoord;
 
+// this is a matrix which contain all the matrix operations
+// to be performed in this object
+uniform mat4 transform;
+
 // these variables will be passed to the fragment shader, or
 // the geometry shader, if there's one. the "out" variables
 // of the vertex shader have to be of the same name and type
@@ -21,5 +25,5 @@ void main() {
     // of a vertex shader is to define a position for every vertex,
     // so somewhere in a vertex shader main function, the gl_Position
     // has to be set.
-    gl_Position = vec4(aPos, 1.0);
+    gl_Position = transform * vec4(aPos, 1.0);
 }

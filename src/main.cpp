@@ -1,6 +1,10 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 #include <iostream>
 
 #include "shader.hpp"
@@ -192,8 +196,24 @@ int main() {
         // and GL_STENCIL_BUFFER_BIT.
         glClear(GL_COLOR_BUFFER_BIT);
 
+        // declare the transformation matrix, a 4x4 identity matrix.
+        // the glm constructor initializes the matrix as:
+        // | p 0 0 0 |
+        // | 0 p 0 0 |
+        // | 0 0 p 0 | 
+        // | 0 0 0 p | where p = 1.0f in this case.
+        glm::mat4 trans(1.0f);
+        
+        // applies rotation and translation (the order of operations matter,
+        // and it is the opposite of the function calls) on the transformation
+        // matrix, using elapsed time as the target angle and Z as rotation axis.
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, glm::radians((float) glfwGetTime() * 32.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         // calls glUseProgram() internally
         shader.use();
+        // the glm matrix uses a different format than the expected by OpenGL 
+        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
+
         // before drawing, all the textures used have to be active and bound 
         // to their target and their texture unit.
         glActiveTexture(GL_TEXTURE0);
