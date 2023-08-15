@@ -10,7 +10,13 @@
 #include "shader.hpp"
 #include "stb_image.h"
 
+// store screen size to evaluate aspect ratio dynamically
+unsigned int SCREEN_WIDTH = 1200;
+unsigned int SCREEN_HEIGHT = 900;
+
 void framebuffer_size_callback(GLFWwindow*, int width, int height) {
+    SCREEN_WIDTH = width;
+    SCREEN_HEIGHT = height;
     glViewport(0, 0, width, height);
 }
 
@@ -27,7 +33,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create glfw window
-    GLFWwindow* window = glfwCreateWindow(1200, 900, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "LearnOpenGL", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -45,6 +51,12 @@ int main() {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+
+    // enable the OpenGL auto depth test. in a single draw call, OpenGL
+    // draws every triangle in the call, drawing triangles over other
+    // triangles. the depth test draws the z-data in another buffer,
+    // the DEPTH buffer and compares the z-data to draw or to skip drawing. 
+    glEnable(GL_DEPTH_TEST);
 
     // all the shader logic is now being done in a separate 
     // "Shader" class. more details in the "shader.cpp" file
@@ -128,20 +140,49 @@ int main() {
     // same as above for the texture2, 1 for GL_TEXTURE1
     shader.setInt("texture2", 1);
     
-    // set vertex data to be stored in the Vertex Buffer
-    // and passed to the vertex shader
+    // cube model
     float vertices[] = {
-        // positions         // colors           // texture coords
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-       -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-       -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left
-    };
-
-    // set indices used by the EBO (Element Buffer Object)
-    unsigned int indices[] = {
-        1, 2, 3, // triangle 1
-        0, 1, 3 // triangle 2
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
     unsigned int VAO; // (Vertex Array Object)
@@ -154,36 +195,30 @@ int main() {
     // stores the vertices array in the currently bound buffer, the VBO
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    unsigned int EBO; // (Element Buffer Object)
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    // stores the indices array in the currently bound buffer, the EBO
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
     // specifies how the vertex data from the buffer currently bound 
-    // to GL_ARRAY_BUFFER target is set to be interpreted. in this case, 
-    // we are specifying that location 0 is an attribute consisting
-    // of 3 components, they are of float type, (in practice, a vec3), 
-    // that they are tightly packed (stride = 12) and that the offset
-    // of the buffer bound to GL_ARRAY_BUFFER is zero ((void*) 0).
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) 0);
+    // to GL_ARRAY_BUFFER target is set to be interpreted
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) 0);
 
     // vertex attributes are disabled by default
     glEnableVertexAttribArray(0);
     
-    // sets up the new color attributes, the vertex attributes have
-    // a new stride 6 floats (stride = 24)., and the color data 
-    // starts 3 floats ahead of the initial pointer, so a 
-    // (void*) (3 * sizeof(float)) pointer has to be passed.
-    // the stride has to be changed for every glVertexAttribPointer,
-    // otherwise the attribute would be unaligned.
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (3 * sizeof(float)));
-    
-    // every active vertex attribute has to be enabled individually
+    // sets up the texture coordinate attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) (3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    // world positions of each cube
+    glm::vec3 cubePositions[] = {
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(2.0f, 5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f, 3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f, 2.0f, -2.5f),
+        glm::vec3(1.5f, 0.2f, -1.5f),
+        glm::vec3(-1.3f, 1.0f, -1.5f)
+    };
 
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
@@ -194,25 +229,11 @@ int main() {
         // cleared, with the previously specified glClearColor call.
         // possible values: GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT
         // and GL_STENCIL_BUFFER_BIT.
-        glClear(GL_COLOR_BUFFER_BIT);
+        // addendum: the depth buffer has to be cleared too.  
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // declare the transformation matrix, a 4x4 identity matrix.
-        // the glm constructor initializes the matrix as:
-        // | p 0 0 0 |
-        // | 0 p 0 0 |
-        // | 0 0 p 0 | 
-        // | 0 0 0 p | where p = 1.0f in this case.
-        glm::mat4 trans(1.0f);
-        
-        // applies rotation and translation (the order of operations matter,
-        // and it is the opposite of the function calls) on the transformation
-        // matrix, using elapsed time as the target angle and Z as rotation axis.
-        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-        trans = glm::rotate(trans, glm::radians((float) glfwGetTime() * 32.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         // calls glUseProgram() internally
         shader.use();
-        // the glm matrix uses a different format than the expected by OpenGL 
-        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
 
         // before drawing, all the textures used have to be active and bound 
         // to their target and their texture unit.
@@ -223,9 +244,32 @@ int main() {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
+        // declares the view matrix (see shader.vs).
+        glm::mat4 view(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        shader.setMat4("view", view);    
+        
+        // declares the projection matrix (see shader.vs).
+        glm::mat4 projection(1.0f);
+        projection = glm::perspective(glm::radians(45.0f), (float) SCREEN_WIDTH / (float) SCREEN_HEIGHT, 0.1f, 100.0f);
+        shader.setMat4("projection", projection);
+        
         // binds VAO that contains all the stored vertex data
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        for (unsigned int i = 0 ; i < 10 ; i++) {
+            // declares the model matrix (see shader.vs).
+            glm::mat4 model(1.0f);
+            // (2nd operation) applies constant translation. it is not cumulative.
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            // (1st operation) applies rotation based on how much time has passed
+            model = glm::rotate(model, (float) glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            // at every frame, the object starts at its center, (0, 0, 0), rotates
+            // and translates to its position that can be seen on screen. 
+            glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+            
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         // swaps the back draw buffer with the currently shown draw buffer.
         // All draw calls above were executed in the back buffer to prevent
