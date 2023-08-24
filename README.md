@@ -1,5 +1,8 @@
+Colors
+<img src="screenshots/7 colors.png" alt="Colors chapter screenshot" />
+
 Cameras
-<video controls autoplay muted loop src="screenshots/6 cameras.mp4">
+<video controls autoplay muted loop src="screenshots/6 cameras.mp4" type="video/mp4">
 
 Coordinate Systems
 <video controls autoplay muted loop src="screenshots/5 coordinate systems.mp4" type="video/mp4">
