@@ -1,3 +1,6 @@
+Basic Lighting
+<img src="screenshots/8 basic lighting.png" alt="Basic Lighting chapter screenshot" />
+
 Colors
 <img src="screenshots/7 colors.png" alt="Colors chapter screenshot" />
 
