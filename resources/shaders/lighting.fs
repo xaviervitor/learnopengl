@@ -1,53 +1,58 @@
 #version 330 core
 
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+
+struct Light {
+    vec3 position;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
 // interpolated position and normal vector. will be used
 // in the lighting calculations.
 in vec3 FragPos;
 in vec3 Normal;
 
-uniform vec3 objectColor;
-uniform vec3 lightColor;
-uniform vec3 lightPos;
+// object and light data are stored in Material and Light
+// structs. 
+uniform Material material;
+uniform Light light;
+
 uniform vec3 viewPos;
 
 out vec4 FragColor;
 
 void main() {
-    // the ambient component represents all the bounce light an object
-    // receives from the main light. in this case, it just adds a 
-    // constant fraction of the light color on all the fragments.
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * lightColor;
+    // ambient
+    // the previously used "ambient strength" is now defined as
+    // the light.ambient component, as a full color.
+    vec3 ambient = light.ambient * (material.ambient);
 
-    // the diffuse component represents the relation between the angle
-    // the light hits the object. the smaller the angle between the
-    // light vector and the surface normal, the brighter the light
-    // should appear.
+    // diffuse
     vec3 normal = normalize(Normal);
-    // lightPos - FragPos results in a negative light direction vector
-    vec3 lightDir = normalize(lightPos - FragPos);
-    // the dot product between the normal vector and the negative light
-    // direction (both normalized) produces the angle of interest.
-    // the light intensity should vary from 0 to 1 (colors are
-    // always positive), so angles less than 0 are clamped.
+    vec3 lightDir = normalize(light.position - FragPos);
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor;
-
-    // the specular component represents the light that bounces directly
-    // to the camera on reflective surfaces, like a mirror. 
-    // the angle between the reflected light vector and the view vector
-    // represent how reflective a fragment should be.
-    float specularStrength = 0.5;
+    // previously, light.diffuse was just 1.0f, and ommited.
+    vec3 diffuse = light.diffuse * (diff * material.diffuse);
+    
+    // specular
     vec3 viewDir = normalize(viewPos - FragPos);
-    // the negative of lightDir (the original lightDir) has to be used
-    // to get the reflection vector.
     vec3 reflectDir = reflect(-lightDir, normal);
-    // the "32" is arbitrary. this intensity can be used to define an
-    // object's reflective property 
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = specularStrength * spec * lightColor;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // the previously implemented "specular strength" is now defined 
+    // as the light.specular component, as a full color.
+    vec3 specular = light.specular * (spec * material.specular);
 
-    vec3 result = (specular + ambient + diffuse) * objectColor;
+    // the final multiplication by the "object color" doesn't need to
+    // be done anymore because all the color components of the material
+    // are already multiplied in each lighting component. 
+    vec3 result = ambient + diffuse + specular;
 
     FragColor = vec4(result, 1.0);
 }

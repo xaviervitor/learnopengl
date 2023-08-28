@@ -19,7 +19,7 @@ void main() {
     
     // the position and normal vectors need to be in world
     // space. a simple model matrix multiplication is enough for
-    // the position vector, 
+    // the position vector.
     FragPos = vec3(model * vec4(aPos, 1.0));
     // the normal vector needs to account for the non-uniform scaling
     // of the model matrix. to transform a normal to world space,
