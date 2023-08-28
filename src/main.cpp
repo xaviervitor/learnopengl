@@ -144,8 +144,22 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         lightingShader.use();
-        lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+
+        // structs in GLSL are like "namespaces". we set the uniforms
+        // in the same way as usual.
+        lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        lightingShader.setFloat("material.shininess", 32.0f);
+        
+        glm::vec3 lightColor;
+        lightColor.r = sin(glfwGetTime() * 2.0f);
+        lightColor.g = sin(glfwGetTime() * 0.7f);
+        lightColor.b = sin(glfwGetTime() * 1.3f);
+
+        lightingShader.setVec3("light.ambient", lightColor * 0.2f);
+        lightingShader.setVec3("light.diffuse", lightColor * 0.5f);
+        lightingShader.setVec3("light.specular", lightColor);
 
         glm::mat4 projection = glm::perspective(glm::radians(camera.zoom), (float) SCREEN_WIDTH / (float) SCREEN_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
@@ -155,7 +169,7 @@ int main() {
         lightingShader.setMat4("view", view);
         lightingShader.setMat4("model", model);
         
-        lightingShader.setVec3("lightPos", lightPos);
+        lightingShader.setVec3("light.position", lightPos);
         lightingShader.setVec3("viewPos", camera.position);
         
         glBindVertexArray(VAO);
@@ -169,6 +183,7 @@ int main() {
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.25f));
         shader.setMat4("model", model);
+        shader.setVec3("color", lightColor);
 
         glBindVertexArray(lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
