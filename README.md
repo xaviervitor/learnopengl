@@ -1,3 +1,6 @@
+Lighting Maps
+<img src="screenshots/9 lighting maps.png" alt="Lighting Maps chapter screenshot" />
+
 Basic Lighting
 <img src="screenshots/8 basic lighting.png" alt="Basic Lighting chapter screenshot" />
 
