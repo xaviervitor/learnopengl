@@ -1,3 +1,6 @@
+Light Casters
+<img src="screenshots/10 light casters.png" alt="Light Casters chapter screenshot" />
+
 Lighting Maps
 <img src="screenshots/9 lighting maps.png" alt="Lighting Maps chapter screenshot" />
 

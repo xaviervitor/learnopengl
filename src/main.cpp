@@ -142,8 +142,21 @@ int main() {
     unsigned int diffuseMap = loadTexture("resources/textures/container2.png");
     unsigned int specularMap = loadTexture("resources/textures/container2_specular.png");
 
+    glm::vec3 cubePositions[] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
     while (!glfwWindowShouldClose(window)) {
-        float currentFrame = static_cast<float>(glfwGetTime());
+        float currentFrame = (float) glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         
@@ -155,53 +168,53 @@ int main() {
 
         lightingShader.use();
 
-        // instead of setting vec3 colors, we set the texture units
-        // corresponding to each lighting map
-        lightingShader.setInt("material.diffuse", 0);
-        lightingShader.setInt("material.specular", 1);
-        lightingShader.setFloat("material.shininess", 32.0f);
-        
-        glm::vec3 lightColor = glm::vec3(1.0f);
-        lightingShader.setVec3("light.ambient", lightColor * 0.2f);
-        lightingShader.setVec3("light.diffuse", lightColor * 0.5f);
-        lightingShader.setVec3("light.specular", lightColor);
-
         glm::mat4 projection = glm::perspective(glm::radians(camera.zoom), (float) SCREEN_WIDTH / (float) SCREEN_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        glm::mat4 model = glm::mat4(1.0f);
-
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
-        lightingShader.setMat4("model", model);
         
-        lightingShader.setVec3("light.position", lightPos);
+        lightingShader.setInt("material.diffuse", 0);
+        lightingShader.setInt("material.specular", 1);
+        lightingShader.setFloat("material.shininess", 64.0f);
+
+        glm::vec3 lightColor = glm::vec3(1.0f);
+        lightingShader.setVec3("light.ambient", lightColor * 0.1f);
+        lightingShader.setVec3("light.diffuse", lightColor * 0.8f);
+        lightingShader.setVec3("light.specular", lightColor);
+        lightingShader.setVec3("light.position", camera.position);
+        lightingShader.setVec3("light.direction", camera.front);
+        lightingShader.setFloat("light.innerCutOff", glm::cos(glm::radians(12.5f)));
+        lightingShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+        // Light with distance of 50, as described at (Ogre3D's wiki)[https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation]
+        lightingShader.setFloat("light.constant", 1.0f);
+        lightingShader.setFloat("light.linear", 0.09f);
+        lightingShader.setFloat("light.quadratic", 0.032f);
+
         lightingShader.setVec3("viewPos", camera.position);
         
         glBindVertexArray(VAO);
-        // bind lighting maps specified in the shader's "material.diffuse"
-        // and "material.specular" texture units above
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, specularMap);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        
-        shader.use();
-        
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.25f));
-        shader.setMat4("model", model);
-        shader.setVec3("color", lightColor);
 
-        glBindVertexArray(lightVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        for(unsigned int i = 0; i < 10; i++) {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            lightingShader.setMat4("model", model);
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteVertexArrays(1, &lightVAO);
+    glDeleteBuffers(1, &VBO);
 
     glfwTerminate();
     return 0;
