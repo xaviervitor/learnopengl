@@ -6,11 +6,23 @@ struct Material {
     float shininess;
 };
 
+// Models a spotlight, in this case a flashlight.
 struct Light {
     vec3 position;
+    vec3 direction;
+    
+    // Stores the cosine of the inner and outer cones.
+    float innerCutOff;
+    float outerCutOff;
+
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    // Stores light attenuation values. These values are defined by the user.
+    float constant;
+    float linear;
+    float quadratic;
 };
 
 in vec3 FragPos;
@@ -34,12 +46,36 @@ void main() {
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    // instead of using constants, we sample each color from diffuse and
-    // specular textures. the ambient color is the same as the diffuse
-    // value. the specular tipically have only B&W colors to appear realistic.
     vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
     vec3 diffuse = light.diffuse * (diff * vec3(texture(material.diffuse, TexCoords)));
     vec3 specular = light.specular * (spec * vec3(texture(material.specular, TexCoords)));
 
+    // cosine of the angle between current fragment lightDir and the defined
+    // light direction of the flashlight.
+    float theta = dot(lightDir, normalize(-light.direction));
+    // Inside the inner cone (theta > inner) the light is at full power;
+    // Outside the outer cone (theta < outer) the light is completely off;
+    // Between the cones, the light intensity is affected by the
+    // interpolation algorithm, (theta - outer) / (inner - outer) and
+    // dims smoothly. All of this is done using the GLSL clamp() function.
+    float epsilon = (light.innerCutOff - light.outerCutOff);
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    // Only diffuse and specular are affected, the ambient light is always
+    // active, otherwise the rest of the scene would be completely unlit.
+    diffuse *= intensity;
+    specular *= intensity;
+
+    // If the attenuation was only linear, it would not be realistic at
+    // all. If the attenuation was only quadratic, the light would be
+    // unbeliavable bright near it's source. This formula uses quadratic,
+    // linear and constant values. This way, the attenuation will in be 
+    // in linear decay close to the light and gradually in more quadratic 
+    // decay as the distance grows. 
+    float distance = length(light.position - FragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    ambient *= attenuation;
+    diffuse *= attenuation;
+    specular *= attenuation;
+    
     FragColor = vec4(ambient + diffuse + specular, 1.0);
 }
