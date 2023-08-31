@@ -11,7 +11,7 @@ main:
 	$(extra_flags) \
 	-I include/ \
 	-L lib/ \
-	-lglfw3 -lopengl32 -lgdi32 -lwinmm
+	-lglfw3 -lassimp -lopengl32 -lgdi32 -lwinmm
 
 run: main
 	./build/learnopengl.exe
