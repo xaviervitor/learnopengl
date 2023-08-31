@@ -1,1 +1,0 @@
-Empty folder meant to contain the compilation output. 

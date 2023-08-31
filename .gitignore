@@ -1,5 +1,3 @@
-# push the build folder, but not the compiled exe
-build/*
-!build/README.md
+build/learnopengl.exe
 
 .vscode/settings.json
