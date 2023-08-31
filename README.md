@@ -1,3 +1,6 @@
+Multiple Lights
+<img src="screenshots/11 multiple lights.png" alt="Multiple Lights chapter screenshot" />
+
 Light Casters
 <img src="screenshots/10 light casters.png" alt="Light Casters chapter screenshot" />
 
@@ -25,8 +28,8 @@ Textures
 Shaders
 <img src="screenshots/2 shaders.png" alt="Shaders chapter screenshot" />
 
-Hello triangle
-<img src="screenshots/1 hello triangle.png" alt="Hello triangle chapter screenshot" />
+Hello Triangle
+<img src="screenshots/1 hello triangle.png" alt="Hello Triangle chapter screenshot" />
 
-Hello window
-<img src="screenshots/0 hello window.png" alt="Hello window chapter screenshot" />
+Hello Window
+<img src="screenshots/0 hello window.png" alt="Hello Window chapter screenshot" />
