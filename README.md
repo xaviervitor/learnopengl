@@ -1,3 +1,9 @@
+# OpenGL Renderer
+An OpenGL renderer using the <a href="https://learnopengl.com/">LearnOpenGL book by JoeyDeVries</a> as a guide.
+## Instructions
+Compile and run using the `make run` command or `make run build=*` to use extra compiler flags for a `debug` or `release` build. 
+## Demo
+The pictures below show snapshots of this project's progress from newest to oldest.
 <div float="center">
   <img width="32%" src="screenshots/12 model loading.png" alt="Model Loading section (Mesh & Model chapters) screenshot" />
   <img width="32%" src="screenshots/11 multiple lights.png" alt="Multiple Lights chapter screenshot" />
