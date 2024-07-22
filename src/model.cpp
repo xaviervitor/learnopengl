@@ -3,8 +3,8 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <iostream>
-#include "stb_image.h"
+#include <cstdio>
+#include "stb/stb_image.h"
 
 Model::Model(std::string path) {
     this->loadModel(path);
@@ -21,12 +21,10 @@ void Model::loadModel(std::string path) {
     // Triangulates the mesh because we only use the GL_TRIANGLES primitive
     // in our glDrawElements calls. Flips UVs because OpenGL expects images 
     // to have their 0.0 coordinates at the bottom.
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if (!scene || !scene->mRootNode || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
-        std::cout << "ASSIMP MODEL LOADING ERROR" << std::endl;
-        std::cout << "path: " << path << std::endl;
-        std::cout << importer.GetErrorString() << std::endl;
+        printf("Assimp model loading error\nPath: %s\n%s", path.c_str(), importer.GetErrorString());
         return;
     }
 
@@ -36,11 +34,11 @@ void Model::loadModel(std::string path) {
     processNode(scene->mRootNode, scene);
 }
 
-void Model::processNode(aiNode *node, const aiScene *scene) {
+void Model::processNode(aiNode* node, const aiScene* scene) {
     // process all meshes in current node
     for (unsigned int i = 0 ; i < node->mNumMeshes ; i++) {
         unsigned int meshIndex = node->mMeshes[i];
-        aiMesh *mesh = scene->mMeshes[meshIndex];
+        aiMesh* mesh = scene->mMeshes[meshIndex];
         this->meshes.push_back(processMesh(mesh, scene));
     }
 
@@ -50,7 +48,7 @@ void Model::processNode(aiNode *node, const aiScene *scene) {
     }
 }
 
-Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
+Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
@@ -89,21 +87,24 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     }
 
     // load all textures and store in the textures array
-    aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-    std::vector<Texture> diffuseTextures = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-    textures.insert(textures.end(), diffuseTextures.begin(), diffuseTextures.end());
-    std::vector<Texture> specularTextures = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-    textures.insert(textures.end(), specularTextures.begin(), specularTextures.end());
+    if (scene->mNumMaterials > 0) {
+        // scene->mMaterials is of size scene->mNumMaterials
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        std::vector<Texture> diffuseTextures = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        textures.insert(textures.end(), diffuseTextures.begin(), diffuseTextures.end());
+        std::vector<Texture> specularTextures = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        textures.insert(textures.end(), specularTextures.begin(), specularTextures.end());
+    }
     
     return Mesh(vertices, indices, textures);
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial *material, aiTextureType textureType, std::string textureTypeName) {
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTextureType textureType, std::string textureTypeName) {
     std::vector<Texture> textures;
     for (unsigned int i = 0 ; i < material->GetTextureCount(textureType) ; i++) {
         aiString aiFilename;
         material->GetTexture(textureType, i, &aiFilename);
-        const char *filename = aiFilename.C_Str();
+        const char* filename = aiFilename.C_Str();
         // texture loading skip logic 
         bool skip = false;
         for (unsigned int j = 0 ; j < this->textures_loaded.size() ; j++) {
@@ -136,28 +137,32 @@ unsigned int Model::textureFromFile(const char* path) {
     glGenTextures(1, &id);
     
     int width, height, channels;
-    unsigned char *data = stbi_load(path,
+    unsigned char* data = stbi_load(path,
         &width, &height, &channels, 0);
 
     if (data != NULL) {
-        GLenum format;
+        GLenum format = 0;
         if (channels == 1)
             format = GL_RED;
         else if (channels == 3)
             format = GL_RGB;
         else if (channels == 4)
             format = GL_RGBA;
-        
-        glBindTexture(GL_TEXTURE_2D, id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
+
+        if (format != 0) {
+            glBindTexture(GL_TEXTURE_2D, id);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            
+            glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        } else {
+            printf("Texture load failed\nPath: %s\n", path);
+        }
     } else {
-        std::cout << "Texture load failed. Path: " << path << std::endl;
+        printf("Texture load failed\nPath: %s\n", path);
     }
     stbi_image_free(data);
     

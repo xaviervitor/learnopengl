@@ -11,14 +11,15 @@
                 "_UNICODE"
             ],
             "compilerPath": "C:/w64devkit/bin/g++.exe",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
+            "cStandard": "c23",
+            "cppStandard": "c++20",
             "intelliSenseMode": "gcc-x64",
             "compilerArgs": [
                 "-lglfw3",
                 "-lopengl32",
                 "-lgdi32",
-                "-lwinmm"
+                "-lwinmm",
+                "-lglad"
             ]
         }
     ],

@@ -1,3 +1,6 @@
-build/learnopengl.exe
+build/*.o
+build/*.d
+/*.dll
+/*.exe
 
 .vscode/settings.json

@@ -1,7 +1,13 @@
 # OpenGL Renderer
-An OpenGL renderer using the <a href="https://learnopengl.com/">LearnOpenGL book by JoeyDeVries</a> as a guide.
+An OpenGL renderer using the [LearnOpenGL book by JoeyDeVries](https://learnopengl.com/) as a guide.
 ## Instructions
-Compile and run using the `make run` command or `make run build=*` to use extra compiler flags for a `debug` or `release` build. 
+### Windows
+1. Download [w64devkit](https://github.com/skeeto/w64devkit/releases), unzip and run ``w64devkit.exe``
+2. Compile with `make [run] [build={debug|release}] [-j]`.
+
+#### Notes
+- Setting the `build` variable compiles with extra compiler flags (See Makefile `build_flags` variable).
+- Running make with the `run` target compiles and immediately runs the generated executable.
 ## Demo
 The pictures below show snapshots of this project's progress from newest to oldest.
 <div float="center">
