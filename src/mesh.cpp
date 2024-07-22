@@ -36,6 +36,7 @@ void Mesh::setup() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texCoords));
     glEnableVertexAttribArray(2);
 
+    // unbinds VAO
     glBindVertexArray(0);
 }
 
