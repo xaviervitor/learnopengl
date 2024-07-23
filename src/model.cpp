@@ -19,7 +19,7 @@ void Model::Draw(Shader &shader) {
 void Model::loadModel(std::string path) {
     Assimp::Importer importer;
     // Triangulates the mesh because we only use the GL_TRIANGLES primitive
-    // in our glDrawElements calls. Flips UVs because OpenGL expects images 
+    // in our glDrawElements calls. Flips UVs because OpenGL expects images
     // to have their 0.0 coordinates at the bottom.
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
@@ -29,7 +29,7 @@ void Model::loadModel(std::string path) {
     }
 
     // stores only the directory to append with the filename returned by
-    // GetTexture() to compare with a loaded texture.  
+    // GetTexture() to compare with a loaded texture.
     this->directory = path.substr(0, path.find_last_of('/'));
     processNode(scene->mRootNode, scene);
 }
@@ -75,7 +75,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
             vertex.texCoords = glm::vec2(vector);
         } else
             vertex.texCoords = glm::vec2(0.0f, 0.0f);
-        
+
         vertices.push_back(vertex);
     }
 
@@ -95,7 +95,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
         std::vector<Texture> specularTextures = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularTextures.begin(), specularTextures.end());
     }
-    
+
     return Mesh(vertices, indices, textures);
 }
 
@@ -105,7 +105,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
         aiString aiFilename;
         material->GetTexture(textureType, i, &aiFilename);
         const char* filename = aiFilename.C_Str();
-        // texture loading skip logic 
+        // texture loading skip logic
         bool skip = false;
         for (unsigned int j = 0 ; j < this->textures_loaded.size() ; j++) {
             bool textureAlreadyLoaded = std::strcmp(filename, this->textures_loaded[j].path.data()) == 0;
@@ -114,7 +114,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
                 // instead of loading again from the file
                 textures.push_back(this->textures_loaded[j]);
                 skip = true;
-                break;                
+                break;
             }
         }
 
@@ -135,7 +135,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
 unsigned int Model::textureFromFile(const char* path) {
     unsigned int id;
     glGenTextures(1, &id);
-    
+
     int width, height, channels;
     unsigned char* data = stbi_load(path,
         &width, &height, &channels, 0);
@@ -151,11 +151,11 @@ unsigned int Model::textureFromFile(const char* path) {
 
         if (format != 0) {
             glBindTexture(GL_TEXTURE_2D, id);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            
+
             glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);
         } else {
@@ -165,6 +165,6 @@ unsigned int Model::textureFromFile(const char* path) {
         printf("Texture load failed\nPath: %s\n", path);
     }
     stbi_image_free(data);
-    
+
     return id;
 }

@@ -3,10 +3,10 @@ output := $(project_name).exe
 
 all: $(output)
 
-# compile flags
+# compile variables
 cc := g++
 std := -std=c++17
-flags := -Wall -Wextra
+warnings := -Wall -Wextra
 
 # build flags
 build_flags.debug := -O0 -ggdb3
@@ -27,13 +27,13 @@ libs := $(patsubst lib/%.dll, %.dll, $(shared_libs))
 
 # link all compiled objects
 $(output): $(objects) $(libs)
-	$(cc) $(filter-out %.dll,$^) -o $@ $(std) $(flags) $(extra_flags) -L lib/ -lglfw3 -lassimp -lopengl32 -lgdi32 -lwinmm -lglad
+	$(cc) $(filter-out $(libs),$^) -o $@ $(std) $(warnings) $(extra_flags) -L lib/ -lglfw3 -lassimp -lopengl32 -lgdi32 -lwinmm -lglad
 
 -include $(depends)
 
 # build all src/%.cpp to build/%.o
 build/%.o: src/%.cpp Makefile
-	$(cc) -c $< -o $@ $(std) $(flags) $(extra_flags) -MMD -MP -I include/
+	$(cc) -c $< -o $@ $(std) $(warnings) $(extra_flags) -MMD -MP -I include/
 
 # copy all lib/%.dll to /%.dll
 %.dll: lib/%.dll

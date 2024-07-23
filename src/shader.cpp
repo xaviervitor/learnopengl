@@ -94,7 +94,7 @@ void Shader::checkShaderCompileErrors(unsigned int shader, const char* path) {
     int success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        int bufSize = 1024;
+        const int bufSize = 1024;
         char infoLog[bufSize];
         glGetShaderInfoLog(shader, bufSize, NULL, infoLog);
         printf("Shader compilation error\nPath: %s\n%s", path, infoLog);
@@ -105,7 +105,7 @@ void Shader::checkProgramLinkErrors(unsigned int program) {
     int success;
     glGetProgramiv(program, GL_LINK_STATUS, &success);
     if (!success) {
-        int bufSize = 1024;
+        const int bufSize = 1024;
         char infoLog[bufSize];
         glGetProgramInfoLog(program, bufSize, NULL, infoLog);
         printf("Shader linking error\nPath vertex: %s\nPath fragment: %s\n%s\n", this->vertexSourcePath, this->fragmentSourcePath, infoLog);

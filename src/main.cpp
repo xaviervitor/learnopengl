@@ -18,8 +18,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
 
-unsigned int SCREEN_WIDTH = 1200;
-unsigned int SCREEN_HEIGHT = 900;
+int SCREEN_WIDTH = 1200;
+int SCREEN_HEIGHT = 900;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX;
@@ -46,7 +46,7 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
-    
+
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
@@ -56,9 +56,9 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    
+
     glEnable(GL_STENCIL_TEST);
-    // if stencil & depth tests succeed, GL_REPLACE with ref value (1). otherwise, GL_KEEP 
+    // if stencil & depth tests succeed, GL_REPLACE with ref value (1). otherwise, GL_KEEP
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     Shader textureShader = Shader(
@@ -73,14 +73,14 @@ int main() {
 
     Model backpackModel = Model("resources/models/backpack/backpack.obj");
     Model cubeModel = Model("resources/models/cube/cube.obj");
-    
+
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = (float) glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        
+
         processInput(window);
-        
+
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -101,11 +101,11 @@ int main() {
         model = glm::scale(model, glm::vec3(100.0f, 1.0f, 100.0f));
         textureShader.setMat4("model", model);
         cubeModel.Draw(textureShader);
-        
+
         // all fragments should GL_ALWAYS pass the stencil test
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF); // enable writing to the stencil buffer
-        
+
         // Draw backpack
         model = glm::mat4(1.0f);
         textureShader.setMat4("model", model);
@@ -131,7 +131,7 @@ int main() {
         backpackModel.Draw(colorShader);
 
         glEnable(GL_DEPTH_TEST); // reenable depth testing after outline drawing
-        
+
         // Enable writing to the stencil buffer - this has to be done before the
         // glClear(GL_STENCIL_BUFFER_BIT) call, or the stencil buffer will not be cleared!
         glStencilMask(0xFF);
@@ -170,9 +170,9 @@ void mouse_callback(GLFWwindow*, double xPos, double yPos) {
         lastY = yPos;
         firstMouse = false;
     }
-    
+
     float xOffset = xPos - lastX;
-    float yOffset = lastY - yPos; 
+    float yOffset = lastY - yPos;
 
     lastX = xPos;
     lastY = yPos;
