@@ -8,9 +8,9 @@ FileString::FileString(const char* path) {
 
     // get buffer size
     fseek(file, 0L, SEEK_END);
-    long size = ftell(file);
+    size_t size = (size_t) ftell(file);
     rewind(file);
-    
+
     // alloc and assign file to buffer
     str = (char*) malloc(size + 1);
     fread(str, size * sizeof(char), 1, file);

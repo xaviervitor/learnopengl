@@ -1,26 +1,26 @@
 #include "mesh.hpp"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
-    this->vertices = vertices;
-    this->indices = indices;
-    this->textures = textures;
+Mesh::Mesh(std::vector<Vertex> inVertices, std::vector<unsigned int> inIndices, std::vector<Texture> inTextures) {
+    vertices = inVertices;
+    indices = inIndices;
+    textures = inTextures;
 
-    this->setup();
+    setup();
 }
 
 void Mesh::setup() {
-    glGenVertexArrays(1, &this->VAO);
-    glBindVertexArray(this->VAO);
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
 
-    glGenBuffers(1, &this->VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // load all vertices to GPU
-    glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-    glGenBuffers(1, &this->EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     // load all indices to GPU
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
     // set vertex attributes. this is easier now, using the Vertex struct. the
     // offsetof() function trivializes previous pointer arithmetics.
@@ -51,9 +51,9 @@ void Mesh::Draw(Shader &shader) {
     // the possible texture types are only diffuse and specular.
     unsigned int diffuseCount = 0;
     unsigned int specularCount = 0;
-    for (unsigned int i = 0 ; i < this->textures.size() ; i++) {
+    for (unsigned int i = 0 ; i < textures.size() ; i++) {
         std::string number;
-        std::string type = this->textures[i].type;
+        std::string type = textures[i].type;
         if (type == "texture_diffuse")
             number = std::to_string(diffuseCount++);
         else if (type == "texture_specular")
@@ -65,11 +65,11 @@ void Mesh::Draw(Shader &shader) {
         shader.setInt(("material." + type + number).c_str(), i);
         // bind the Nth texture to the Nth texture unit
         glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
+        glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
 
     // draw the mesh
-    glBindVertexArray(this->VAO);
-    glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

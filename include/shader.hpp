@@ -26,7 +26,7 @@ public:
 private:
     const char* vertexSourcePath;
     const char* fragmentSourcePath;
-   
+
     void checkShaderCompileErrors(unsigned int shader, const char* path);
     void checkProgramLinkErrors(unsigned int program);
 };
