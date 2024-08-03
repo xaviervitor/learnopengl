@@ -4,9 +4,13 @@ output := $(project_name).exe
 all: $(output)
 
 # compile variables
-cc := g++
+cxx := g++
 std := -std=c++17
-warnings := -Wall -Wextra
+warnings := -Wall -Wextra -pedantic -Wcast-align -Wcast-qual \
+-Wctor-dtor-privacy -Wdisabled-optimization -Winit-self -Wlogical-op \
+-Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Woverloaded-virtual \
+-Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo \
+-Wstrict-null-sentinel -Wswitch-default -Wundef -Wno-unused
 
 # build flags
 build_flags.debug := -O0 -ggdb3
@@ -27,17 +31,20 @@ libs := $(patsubst lib/%.dll, %.dll, $(shared_libs))
 
 # link all compiled objects
 $(output): $(objects) $(libs)
-	$(cc) $(filter-out $(libs),$^) -o $@ $(std) $(warnings) $(extra_flags) -L lib/ -lglfw3 -lassimp -lopengl32 -lgdi32 -lwinmm -lglad
+	@$(cxx) $(filter-out $(libs),$^) -o $@ $(std) $(warnings) $(extra_flags) -L lib/ -lglfw3 -lassimp -lopengl32 -lgdi32 -lwinmm -lglad
+	@echo $@
 
 -include $(depends)
 
 # build all src/%.cpp to build/%.o
 build/%.o: src/%.cpp Makefile
-	$(cc) -c $< -o $@ $(std) $(warnings) $(extra_flags) -MMD -MP -I include/
+	@$(cxx) -c $< -o $@ $(std) $(warnings) $(extra_flags) -MMD -MP -I src/include/ -isystem include/
+	@echo "$< > $@"
 
 # copy all lib/%.dll to /%.dll
 %.dll: lib/%.dll
-	cp $^ $@
+	@cp $^ $@
+	@echo "cp $^ > $@"
 
 run: $(output)
 	./$(output)

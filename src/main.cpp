@@ -18,8 +18,12 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
 
-int SCREEN_WIDTH = 1200;
-int SCREEN_HEIGHT = 900;
+const int DEFAULT_SCREEN_WIDTH = 1200;
+const int DEFAULT_SCREEN_HEIGHT = 900;
+
+int screenWidth;
+int screenHeight;
+bool fullscreen = true;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX;
@@ -35,7 +39,18 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWmonitor* monitor = NULL;
+    if (fullscreen) {
+        monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* vidmode = glfwGetVideoMode(monitor);
+        screenWidth = vidmode->width;
+        screenHeight = vidmode->height;
+    } else {
+        screenWidth = DEFAULT_SCREEN_WIDTH;
+        screenHeight = DEFAULT_SCREEN_HEIGHT;
+    }
+
+    GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "LearnOpenGL", monitor, NULL);
     if (window == NULL) {
         printf("Failed to create GLFW window\n");
         glfwTerminate();
@@ -86,7 +101,7 @@ int main() {
 
         textureShader.use();
 
-        glm::mat4 projection = glm::perspective(glm::radians(camera.zoom), (float) SCREEN_WIDTH / (float) SCREEN_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.zoom), (float) screenWidth / (float) screenHeight, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0f);
         textureShader.setMat4("projection", projection);
@@ -159,8 +174,8 @@ void processInput(GLFWwindow* window) {
 }
 
 void framebuffer_size_callback(GLFWwindow*, int width, int height) {
-    SCREEN_WIDTH = width;
-    SCREEN_HEIGHT = height;
+    screenWidth = width;
+    screenHeight = height;
     glViewport(0, 0, width, height);
 }
 
