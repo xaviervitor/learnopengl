@@ -15,6 +15,9 @@ FileString::FileString(const char* path) {
     str = (char*) malloc(size + 1);
     fread(str, size * sizeof(char), 1, file);
 
+    // if malloc fails, handle it and return
+    // if fread fails, handle it and return
+
     fclose(file);
 
     str[size] = '\0';
