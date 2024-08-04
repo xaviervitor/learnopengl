@@ -50,9 +50,13 @@ run: $(output)
 	./$(output)
 
 clean:
-	rm -f $(output)
-	rm -f $(objects)
-	rm -f $(depends)
-	rm -f $(libs)
+	@rm -f $(output)
+	@echo "rm output"
+	@rm -f $(objects)
+	@echo "rm objects"
+	@rm -f $(depends)
+	@echo "rm depends"
+	@rm -f $(libs)
+	@echo "rm libs"
 
 .PHONY: all run clean

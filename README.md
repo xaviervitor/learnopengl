@@ -8,6 +8,7 @@ An OpenGL renderer using the [LearnOpenGL book by JoeyDeVries](https://learnopen
 #### Notes
 - Setting the `build` variable compiles with extra compiler flags (See Makefile `build_flags` variable).
 - Running make with the `run` target compiles and immediately runs the generated executable.
+
 ## Demo
 The pictures below show snapshots of this project's progress from newest to oldest.
 <div float="center">

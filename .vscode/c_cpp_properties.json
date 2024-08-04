@@ -3,7 +3,8 @@
         {
             "name": "w64devkit",
             "includePath": [
-                "${workspaceFolder}/include/"
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/src/include"
             ],
             "defines": [
                 "_DEBUG",
