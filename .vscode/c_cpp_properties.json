@@ -13,7 +13,7 @@
             ],
             "compilerPath": "C:/w64devkit/bin/g++.exe",
             "cStandard": "c23",
-            "cppStandard": "c++20",
+            "cppStandard": "c++11",
             "intelliSenseMode": "gcc-x64",
             "compilerArgs": [
                 "-lglfw3",

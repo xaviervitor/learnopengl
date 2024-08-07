@@ -1,6 +1,6 @@
 #include "camera.hpp"
 
-#include <glm/gtc/matrix_transform.hpp>
+#include "glm/gtc/matrix_transform.hpp"
 
 Camera::Camera(glm::vec3 inPosition, glm::vec3 inWorldUp, float inYaw, float inPitch)
         : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM) {
