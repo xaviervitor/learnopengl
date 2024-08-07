@@ -1,13 +1,12 @@
+#include <cstdio>
+
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
-
-#include <cstdio>
-
 #include "stb/stb_image.h"
+
 #include "shader.hpp"
 #include "camera.hpp"
 #include "model.hpp"
