@@ -1,23 +1,15 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 
 // Defines several possible options for camera movement. Used as abstraction
 // to stay away from window-system specific input methods.
-enum CameraMovement {
+enum class CameraMovement {
     FORWARD,
     BACKWARD,
     LEFT,
     RIGHT
 };
-
-// Default camera values
-const float YAW = -90.0f;
-const float PITCH = 0.0f;
-const float SPEED = 2.5f;
-const float SENSITIVITY = 0.1f;
-const float ZOOM = 45.0f;
 
 // An abstract camera class that processes input and calculates the
 // corresponding Euler Angles, Vectors and Matrices for use in OpenGL.
@@ -40,8 +32,8 @@ public:
     // constructor with vectors
     Camera(glm::vec3 inPosition = glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3 inWorldUp = glm::vec3(0.0f, 1.0f, 0.0f),
-        float inYaw = YAW,
-        float inPitch = PITCH);
+        float inYaw = Camera::defaultYaw,
+        float inPitch = Camera::defaultPitch);
 
     // constructor with scalar values
     Camera(float inPosX, float inPosY, float inPosZ,
@@ -59,13 +51,20 @@ public:
 
     // processes input received from a mouse input system. Expects the offset
     // value in both the x and y direction.
-    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
+    void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
 
     // processes input received from a mouse scroll-wheel event. Only requires
     // input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);
 
 private:
+    // Default camera values
+    constexpr static float defaultYaw = -90.0f;
+    constexpr static float defaultPitch = 0.0f;
+    constexpr static float defaultSpeed = 2.5f;
+    constexpr static float defaultSensitivity = 0.1f;
+    constexpr static float defaultZoom = 45.0f;
+
     // calculates the front vector from the Camera's (updated) Euler Angles
     void updateCameraVectors();
 };

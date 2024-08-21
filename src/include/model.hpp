@@ -2,8 +2,12 @@
 
 #include <string>
 #include <vector>
-#include <assimp/scene.h>
-#include "mesh.hpp"
+
+#include "assimp/scene.h"
+
+class Shader;
+class Texture;
+class Mesh;
 
 class Model {
 public:

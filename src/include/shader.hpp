@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glad/glad.h"
+#include <string>
 
 #include "glm/glm.hpp"
 
@@ -27,6 +27,7 @@ private:
     const char* vertexSourcePath;
     const char* fragmentSourcePath;
 
+    std::string stringFromFile(const char* path);
     void checkShaderCompileErrors(unsigned int shader, const char* path);
     void checkProgramLinkErrors(unsigned int program);
 };

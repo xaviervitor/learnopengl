@@ -2,10 +2,15 @@
 
 #include <cstdio>
 
+#include "glad/glad.h"
+#include "glm/glm.hpp"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 #include "stb/stb_image.h"
+
+#include "mesh.hpp"
+#include "shader.hpp"
 
 Model::Model(std::string path) {
     this->loadModel(path);
