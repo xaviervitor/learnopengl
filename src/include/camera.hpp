@@ -7,8 +7,11 @@
 enum class CameraMovement {
     FORWARD,
     BACKWARD,
+    RIGHT,
     LEFT,
-    RIGHT
+    UP,
+    DOWN,
+    SIZE
 };
 
 // An abstract camera class that processes input and calculates the
