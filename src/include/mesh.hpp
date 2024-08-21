@@ -1,9 +1,11 @@
 #pragma once
 
-#include "glm/glm.hpp"
 #include <string>
 #include <vector>
-#include "shader.hpp"
+
+#include "glm/glm.hpp"
+
+class Shader;
 
 struct Vertex {
     glm::vec3 position;

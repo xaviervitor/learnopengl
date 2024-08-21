@@ -1,8 +1,11 @@
 #include "shader.hpp"
 
 #include <cstdio>
+#include <string>
+#include <fstream>
+#include <sstream>
 
-#include "filestring.hpp"
+#include "glad/glad.h"
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     // store paths for debugging
@@ -10,20 +13,24 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     this->fragmentSourcePath = fragmentPath;
 
     // read shader source files
-    FileString vertexShaderFile = FileString(vertexPath);
-    FileString fragmentShaderFile = FileString(fragmentPath);
+    std::string vertexShaderCode = stringFromFile(vertexPath);
+    std::string fragmentShaderCode = stringFromFile(fragmentPath);
+
+    // copy c++ strings to c strings
+    const char* vertexShaderSource = vertexShaderCode.c_str();
+    const char* fragmentShaderSource = fragmentShaderCode.c_str();
 
     unsigned int vertexShader, fragmentShader;
 
     // vertex shader compilation and error checking
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, vertexShaderFile.getStringAddress(), NULL);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
     checkShaderCompileErrors(vertexShader, this->vertexSourcePath);
 
     // fragment shader compilation and error checking
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, fragmentShaderFile.getStringAddress(), NULL);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
     checkShaderCompileErrors(fragmentShader, this->fragmentSourcePath);
 
@@ -89,6 +96,29 @@ void Shader::setMat3(const char* name, const glm::mat3 &mat) const {
 
 void Shader::setMat4(const char* name, const glm::mat4 &mat) const {
     glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, &mat[0][0]);
+}
+
+std::string Shader::stringFromFile(const char* path) {
+    std::ifstream shaderFile;
+    shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+    try {
+        // open file
+        shaderFile.open(path);
+        std::stringstream shaderFileStream;
+
+        // read file as stream
+        shaderFileStream << shaderFile.rdbuf();
+
+        // close file
+        shaderFile.close();
+
+        // return string from stream
+        return shaderFileStream.str();
+    } catch(std::ifstream::failure& e) {
+        printf("Shader file read failed\nPath: %s\n", path);
+        return "";
+    }
 }
 
 void Shader::checkShaderCompileErrors(unsigned int shader, const char* path) {

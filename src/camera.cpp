@@ -3,7 +3,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 Camera::Camera(glm::vec3 inPosition, glm::vec3 inWorldUp, float inYaw, float inPitch)
-        : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM) {
+        : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(Camera::defaultSpeed), mouseSensitivity(Camera::defaultSensitivity), zoom(Camera::defaultZoom) {
     position = inPosition;
     worldUp = inWorldUp;
     yaw = inYaw;
@@ -12,7 +12,7 @@ Camera::Camera(glm::vec3 inPosition, glm::vec3 inWorldUp, float inYaw, float inP
 }
 
 Camera::Camera(float inPosX, float inPosY, float inPosZ, float inWorldUpX, float inWorldUpY, float inWorldUpZ, float inYaw, float inPitch)
-        : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM) {
+        : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(Camera::defaultSpeed), mouseSensitivity(Camera::defaultSensitivity), zoom(Camera::defaultZoom) {
     position = glm::vec3(inPosX, inPosY, inPosZ);
     worldUp = glm::vec3(inWorldUpX, inWorldUpY, inWorldUpZ);
     yaw = inYaw;
@@ -37,17 +37,17 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime) {
     // uses camera vectors to move in the desired directions.
     // FORWARD and BACKWARD multiplies with Front and -Front;
     // LEFT and RIGHT multiplies with Right and -Right.
-    if (direction == FORWARD)
+    if (direction == CameraMovement::FORWARD)
         position += front * velocity;
-    if (direction == BACKWARD)
+    if (direction == CameraMovement::BACKWARD)
         position -= front * velocity;
-    if (direction == LEFT)
+    if (direction == CameraMovement::LEFT)
         position -= right * velocity;
-    if (direction == RIGHT)
+    if (direction == CameraMovement::RIGHT)
         position += right * velocity;
 }
 
-void Camera::ProcessMouseMovement(float xOffset, float yOffset, GLboolean constrainPitch) {
+void Camera::ProcessMouseMovement(float xOffset, float yOffset, bool constrainPitch) {
     xOffset *= mouseSensitivity;
     yOffset *= mouseSensitivity;
 
