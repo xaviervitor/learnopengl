@@ -13,8 +13,14 @@ warnings := -Wall -Wextra -pedantic -Wcast-align -Wcast-qual -Wctor-dtor-privacy
 
 # build flags
 build_flags.debug := -O0 -ggdb3
-build_flags.release := -O3 -mwindows
+build_flags.release := -O3
 extra_flags := ${build_flags.${build}}
+
+# platform flags
+
+platform_flags.windows := -mwindows
+platform_flags.linux :=
+extra_flags := ${platform_flags.${build}}
 
 # get all src/*.cpp
 sources := $(wildcard src/*.cpp)
