@@ -1,5 +1,3 @@
-build/*.o
-build/*.d
 /*.dll
 /*.exe
 
