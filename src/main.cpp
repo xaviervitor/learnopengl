@@ -16,9 +16,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
 
-const int DEFAULT_SCREEN_WIDTH = 1200;
-const int DEFAULT_SCREEN_HEIGHT = 900;
-
 int screenWidth;
 int screenHeight;
 
@@ -36,10 +33,13 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    screenWidth = DEFAULT_SCREEN_WIDTH;
-    screenHeight = DEFAULT_SCREEN_HEIGHT;
+    GLFWmonitor* myMonitor =  glfwGetPrimaryMonitor();
 
-    GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "LearnOpenGL", NULL, NULL);
+    const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
+    screenWidth = mode->width;
+    screenHeight = mode->height;
+
+    GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "LearnOpenGL", myMonitor, NULL);
     if (window == NULL) {
         printf("Failed to create GLFW window\n");
         glfwTerminate();
