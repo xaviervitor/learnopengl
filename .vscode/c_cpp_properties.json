@@ -1,27 +1,11 @@
 {
     "configurations": [
         {
-            "name": "w64devkit",
-            "includePath": [
-                "${workspaceFolder}/include/",
-                "${workspaceFolder}/src/include"
-            ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
-            "compilerPath": "C:/w64devkit/bin/g++.exe",
-            "cStandard": "c23",
-            "cppStandard": "c++11",
-            "intelliSenseMode": "gcc-x64",
-            "compilerArgs": [
-                "-lglfw3",
-                "-lopengl32",
-                "-lgdi32",
-                "-lwinmm",
-                "-lglad"
-            ]
+            "name": "xmake",
+            "compileCommands": ".vscode/compile_commands.json",
+            "intelliSenseMode": "windows-msvc-x64",
+            "cStandard": "c17",
+            "cppStandard": "c++17"
         }
     ],
     "version": 4
