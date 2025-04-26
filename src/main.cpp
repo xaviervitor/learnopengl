@@ -16,6 +16,11 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
 
+const int DEFAULT_SCREEN_WIDTH = 1920;
+const int DEFAULT_SCREEN_HEIGHT = 1080;
+
+bool windowed = true;
+
 int screenWidth;
 int screenHeight;
 
@@ -33,11 +38,17 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWmonitor* myMonitor =  glfwGetPrimaryMonitor();
-
-    const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
-    screenWidth = mode->width;
-    screenHeight = mode->height;
+    GLFWmonitor* myMonitor;
+    if (windowed) {
+        myMonitor = NULL;
+        screenWidth = DEFAULT_SCREEN_WIDTH;
+        screenHeight = DEFAULT_SCREEN_HEIGHT;
+    } else {
+        myMonitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
+        screenWidth = mode->width;
+        screenHeight = mode->height;
+    }
 
     GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "LearnOpenGL", myMonitor, NULL);
     if (window == NULL) {
