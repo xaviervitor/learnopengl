@@ -1,13 +1,14 @@
 # OpenGL Renderer
 An OpenGL renderer using the [LearnOpenGL book by JoeyDeVries](https://learnopengl.com/) as a guide.
-## Instructions
-### Windows
-1. Download [w64devkit](https://github.com/skeeto/w64devkit/releases), unzip and run ``w64devkit.exe``
-2. Compile with `make [run] [build={debug|release}] [-j]`.
 
-#### Notes
-- Setting the `build` variable compiles with extra compiler flags (See Makefile `build_flags` variable).
-- Running make with the `run` target compiles and immediately runs the generated executable.
+## Build
+1. Download and install [xmake](https://xmake.io/#/getting_started?id=installation).
+2. (Optional) Configure with `xmake config -m {debug|release}`.
+3. Compile with `xmake [run]`.
+
+## Notes
+- Use the `run` option while running xmake to immediately run the compiled executable.
+- If you are using vscode, you can update the compile_commands.json with `xmake project -k compile_commands .vscode`, which will remove incorrectly detected error squiggles.
 
 ## Demo
 The pictures below show snapshots of this project's progress from newest to oldest.
