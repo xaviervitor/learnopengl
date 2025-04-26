@@ -116,6 +116,7 @@ std::string Shader::stringFromFile(const char* path) {
         // return string from stream
         return shaderFileStream.str();
     } catch(std::ifstream::failure& e) {
+        (void) e;
         printf("Shader file read failed\nPath: %s\n", path);
         return "";
     }

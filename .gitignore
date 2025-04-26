@@ -1,4 +1,4 @@
-/*.dll
-/*.exe
+.xmake
 
+.vscode/compile_commands.json
 .vscode/settings.json

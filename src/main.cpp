@@ -269,23 +269,25 @@ void framebuffer_size_callback(GLFWwindow*, int width, int height) {
 }
 
 void mouse_callback(GLFWwindow*, double xPos, double yPos) {
+    float currentX = (float) xPos;
+    float currentY = (float) yPos;
     if (firstMouse) {
-        lastX = xPos;
-        lastY = yPos;
+        lastX = currentX;
+        lastY = currentY;
         firstMouse = false;
     }
 
-    float xOffset = xPos - lastX;
-    float yOffset = lastY - yPos;
+    float xOffset = currentX - lastX;
+    float yOffset = lastY - currentY;
 
-    lastX = xPos;
-    lastY = yPos;
+    lastX = currentX;
+    lastY = currentY;
 
     camera.ProcessMouseMovement(xOffset, yOffset);
 }
 
 void scroll_callback(GLFWwindow*, double, double yOffset) {
-    camera.ProcessMouseScroll(yOffset);
+    camera.ProcessMouseScroll((float) yOffset);
 }
 
 void processInput(GLFWwindow* window) {

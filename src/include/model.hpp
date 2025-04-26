@@ -5,9 +5,9 @@
 
 #include "assimp/scene.h"
 
+#include "mesh.hpp"
+
 class Shader;
-class Texture;
-class Mesh;
 
 class Model {
 public:
